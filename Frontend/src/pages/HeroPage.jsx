@@ -7,6 +7,12 @@ import { useNavigate } from 'react-router-dom';
 
 const HeroPage = () => {
 
+    //testing the error
+
+    // if (Math.random() > 0.5) {
+    //     throw new Error('Random error');   
+    // }
+
     const navigate = useNavigate()
 
     const imgRef = useRef(null);

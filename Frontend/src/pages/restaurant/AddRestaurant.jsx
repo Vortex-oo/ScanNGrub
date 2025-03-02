@@ -12,6 +12,7 @@ const AddRestaurant = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [contactNumber, setContactNumber] = useState('');
+    const [upiId, setUpiId] = useState('')
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [isClickedName, setIsClickedName] = useState(false);
@@ -39,7 +40,7 @@ const AddRestaurant = () => {
         );
     }, []);
 
-    console.log(owner);
+    // console.log(owner);
     
 
     const handleSubmit = async (e) => {
@@ -52,6 +53,7 @@ const AddRestaurant = () => {
                 name,
                 address,
                 contactNumber,
+                upiId,
                 ownerId: owner.ownerId
             }, {
                 headers: { 'Content-Type': 'application/json' },
@@ -140,6 +142,26 @@ const AddRestaurant = () => {
                                 }`}
                         >
                             <p className='flex items-center gap-2'><HiPhone /> Restaurant Contact Number</p>
+                        </label>
+                    </div>
+
+                    <div className="relative mb-4">
+                        <input
+                            required
+                            type={'text'}
+                            value={upiId}
+                            onChange={(e) => setUpiId(e.target.value)}
+                            autoComplete="off"
+                            onClick={() => setIsClickedName(true)}
+                            className="w-full peer border-[2px] border-[#9e9e9e] rounded-2xl bg-transparent p-4 text-[#f5f5f5] transition-[border] duration-150 ease-cubic-bezier focus:outline-none focus:border-[#1a73e8] valid:border-[#1a73e8] text-xl font-semibold"
+                        />
+                        <label
+                            className={`absolute left-[15px] text-[#e8e8e8]  pointer-events-none transform transition-transform duration-150 ease-cubic-bezier z-10 ${isClickedName
+                                ? 'translate-y-[-50%] scale-[0.8] bg-[#000000] px-[0.2em] text-[#2196f3]'
+                                : 'translate-y-4'
+                                }`}
+                        >
+                            <p className='flex items-center gap-2'><SiHomebrew /> Restaurant UPI URL</p>
                         </label>
                     </div>
 

@@ -11,6 +11,7 @@ import UserVerify from "./pages/UserVerifyPage.jsx";
 import OwnerVerify from "./pages/OwnerVerifyPage.jsx";
 import AddRestaurant from "./pages/restaurant/AddRestaurant.jsx";
 import RestaurantDetails from "./pages/restaurant/restaurantDetails.jsx";
+import Payment from "./components/Payment.jsx";
 
 
 
@@ -30,6 +31,13 @@ function App() {
         <Route path="/user/home/:id" element={
           <UserVerify>
             <HomePage />
+          </UserVerify>
+        }
+        />
+
+        <Route path="/user/payment" element={
+          <UserVerify>
+            <Payment />
           </UserVerify>
         }
         />

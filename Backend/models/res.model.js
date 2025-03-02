@@ -32,6 +32,11 @@ const restaurantSchema = new mongoose.Schema(
                 message: props => `${props.value} is not a valid contact number!`,
             },
         },
+        upiId:{
+            type:String,
+            trim:true,
+            required:true
+        }, 
         QrCode: {
             type: String,
             default: null,

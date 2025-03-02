@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import gsap from 'gsap';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import iceCreamKids from "../../assets/Guinea_Pig.png";
 
 const HomePage = () => {
+
+    const navigate = useNavigate();
     const { id } = useParams();
     const { user, loading } = useSelector((state) => state.user);
     const [showDetails, setShowDetails] = useState(false);
@@ -35,7 +37,8 @@ const HomePage = () => {
             fetchMenu();
         }
     }, [id, user]);
-
+    // console.log(menu);
+    
     useEffect(() => {
         gsap.fromTo(
             textRef.current,
@@ -122,6 +125,22 @@ const HomePage = () => {
                                     ))}
                                 </div>
                             </div>
+                        )}
+                        {menu?.upiId && (
+                            <a href={`${menu.upiId}`} target="_blank" rel="noopener noreferrer">
+                                <div className='w-full flex justify-center mt-11'>
+                                    <button
+                                        className="w-[150px] p-0 border-none transform rotate-[5deg] origin-center font-gochi text-[15px] cursor-pointer pb-[3px] rounded-md shadow-[0_2px_0_#494a4b] transition-all duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] bg-[#5cdb95] hover:transform-none active:translate-y-[5px] active:pb-0 focus:outline-none"
+                                        // onClick={() => {
+                                        //     // navigate('/user/payment');
+                                        // }}
+                                    >
+                                        <span className="block bg-[#f1f5f8] px-4 py-2 rounded-md border-2 border-[#494a4b] text-black text-xl font-bold">
+                                            Wanna Pay?
+                                        </span>
+                                    </button>
+                                </div>
+                            </a>
                         )}
                     </>
                 ) : (

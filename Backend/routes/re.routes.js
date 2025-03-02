@@ -11,7 +11,8 @@ restaurantRoute.post('/owner-dashboard', listRestaurants);
 restaurantRoute.post('/add-restaurant', [
     body('name').notEmpty().withMessage('Restaurant name is required'),
     body('address').notEmpty().withMessage('Address is required'),
-    body('contactNumber').isLength({ min: 10, max: 10 }).withMessage('Contact number must be 10 digits')
+    body('contactNumber').isLength({ min: 10, max: 10 }).withMessage('Contact number must be 10 digits'),
+    body('upiId').notEmpty().withMessage('UPI URL is required')
 ], addRestaurant);
 
 // Route to manage a specific restaurant

@@ -15,10 +15,10 @@
 
     // Controller to add a new restaurant
     export const addRestaurant = async (req, res) => {
-        const { name, address, contactNumber,ownerId } = req.body;
+        const { name, address, contactNumber,upiId,ownerId } = req.body;
         try {
             const restaurantId = crypto.randomBytes(10).toString('hex')
-            const newRestaurant = new restaurantModel({ restaurantId,ownerId, name, address, contactNumber });
+            const newRestaurant = new restaurantModel({ restaurantId,ownerId, name, address, contactNumber,upiId });
             await newRestaurant.save();
             res.status(201).json(newRestaurant);
         } catch (error) {
