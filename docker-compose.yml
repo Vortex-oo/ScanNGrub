@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:3000
+    depends_on:
+      - backend
+    volumes:
+      - ./Frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - qr-network
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/qrdb
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./Backend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - qr-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - qr-network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  qr-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

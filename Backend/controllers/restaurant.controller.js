@@ -16,6 +16,9 @@
     // Controller to add a new restaurant
     export const addRestaurant = async (req, res) => {
         const { name, address, contactNumber,upiId,ownerId } = req.body;
+        if (!name || !address || !contactNumber || !upiId) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
         try {
             const restaurantId = crypto.randomBytes(10).toString('hex')
             const newRestaurant = new restaurantModel({ restaurantId,ownerId, name, address, contactNumber,upiId });
@@ -95,23 +98,40 @@
     // Controller to scan a restaurant
     export const scanRestaurant = async (req, res) => {
         const { id } = req.params;
-
+    
         try {
-
             const restaurant = await restaurantModel.findById(id).populate('menuItems');
             if (!restaurant) {
-                return res.status(404).json({ message: 'Restaurant not found' });
+                return res.status(404).json({ 
+                    success: false,
+                    message: 'Restaurant not found' 
+                });
             }
-            const qrCodeUrl = await QRCode.toDataURL(`http://localhost:5173/user/login?${restaurant._id}`);
+    
+            // Fix the URL formatting by adding restaurantId parameter
+            const qrCodeUrl = await QRCode.toDataURL(`http://localhost:5173/user/login?restaurantId=${restaurant._id}`);
             
+            console.log(qrCodeUrl);
+            
+            // Update restaurant with new QR code
             restaurant.QrCode = qrCodeUrl;
             await restaurant.save();
-            res.status(200).json({
-                message: 'Restaurant scanned successfully',
+    
+            return res.status(200).json({
+                success: true,
+                message: 'Restaurant QR code generated successfully',
                 qrCode: qrCodeUrl,
+                restaurant: {
+                    name: restaurant.name,
+                    id: restaurant._id
+                }
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
-            
+            console.error('QR Code Generation Error:', error);
+            return res.status(500).json({ 
+                success: false,
+                message: 'Error generating QR code',
+                error: error.message 
+            });
         }
-    }
+    };

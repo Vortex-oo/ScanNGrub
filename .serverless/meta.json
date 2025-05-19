@@ -1,0 +1,228 @@
+{
+  "E:\\Vs Code\\Projects\\QR\\serverless.yml": {
+    "versionFramework": "4.14.3",
+    "servicePath": "E:\\Vs Code\\Projects\\QR\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "ScanNGrub",
+      "frameworkVersion": "3",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs18.x",
+        "environment": {
+          "TABLE_NAME": "ScanNGrub-${opt:stage, self:provider.stage}-table",
+          "BUCKET_NAME": "ScanNGrub-${opt:stage, self:provider.stage}-bucket",
+          "MONGODB_URI": "${ssm:/ScanNGrub/MONGODB_URI}",
+          "JWT_SECRET": "<REDACTED>"
+        }
+      },
+      "functions": {
+        "userLogin": {
+          "handler": "src/handlers/user.login",
+          "events": [
+            {
+              "http": {
+                "path": "/user/login",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "userSignup": {
+          "handler": "src/handlers/user.signup",
+          "events": [
+            {
+              "http": {
+                "path": "/user/signup",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "listRestaurants": {
+          "handler": "src/handlers/restaurant.list",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/owner-dashboard",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addRestaurant": {
+          "handler": "src/handlers/restaurant.add",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/add-restaurant",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "getRestaurantDetails": {
+          "handler": "src/handlers/restaurant.getDetails",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/details/{id}",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "addMenuItem": {
+          "handler": "src/handlers/menuItem.add",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/{id}/menu-item",
+                "method": "post",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "editMenuItem": {
+          "handler": "src/handlers/menuItem.edit",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/{id}/menu-item/{itemId}",
+                "method": "put",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "deleteMenuItem": {
+          "handler": "src/handlers/menuItem.delete",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/{id}/menu-item/{itemId}",
+                "method": "delete",
+                "cors": true
+              }
+            }
+          ]
+        },
+        "scanRestaurant": {
+          "handler": "src/handlers/restaurant.scan",
+          "events": [
+            {
+              "http": {
+                "path": "/restaurant/scan/{id}",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ]
+        }
+      },
+      "resources": {
+        "Resources": {
+          "RestaurantTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "${self:provider.environment.TABLE_NAME}",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "id",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "id",
+                  "KeyType": "HASH"
+                }
+              ],
+              "BillingMode": "PAY_PER_REQUEST"
+            }
+          },
+          "QRBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketName": "${self:provider.environment.BUCKET_NAME}",
+              "CorsConfiguration": {
+                "CorsRules": [
+                  {
+                    "AllowedHeaders": [
+                      "*"
+                    ],
+                    "AllowedMethods": [
+                      "GET",
+                      "PUT",
+                      "POST",
+                      "DELETE"
+                    ],
+                    "AllowedOrigins": [
+                      "*"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "custom": {
+        "cors": {
+          "origin": "*",
+          "headers": [
+            "Content-Type",
+            "Authorization"
+          ],
+          "allowCredentials": "<REDACTED>"
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs18.x",
+      "environment": {
+        "TABLE_NAME": "ScanNGrub-${opt:stage, self:provider.stage}-table",
+        "BUCKET_NAME": "ScanNGrub-${opt:stage, self:provider.stage}-bucket",
+        "MONGODB_URI": "${ssm:/ScanNGrub/MONGODB_URI}",
+        "JWT_SECRET": "<REDACTED>"
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "error": {
+      "message": "Cannot resolve '${opt:stage, self:provider.stage}' variable at 'provider.environment.TABLE_NAME'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.",
+      "stack": "Error: Cannot resolve '${opt:stage, self:provider.stage}' variable at 'provider.environment.TABLE_NAME'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.\n    at _ResolverManager.resolve (C:\\Users\\DEBJIT\\.serverless\\releases\\4.14.3\\sf-core\\src\\lib\\resolvers\\manager.js:802:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async _ResolverManager.#handlePlaceholderNode (C:\\Users\\DEBJIT\\.serverless\\releases\\4.14.3\\sf-core\\src\\lib\\resolvers\\manager.js:703:9)\n    at async <anonymous> (C:\\Users\\DEBJIT\\.serverless\\releases\\4.14.3\\sf-core\\src\\lib\\resolvers\\manager.js:579:11)\n    at async processNodeAndHandleCompletion (C:\\Users\\DEBJIT\\.serverless\\releases\\4.14.3\\sf-core\\src\\lib\\resolvers\\graph.js:33:5)",
+      "code": "MISSING_VARIABLE_RESULT"
+    },
+    "serviceRawFile": "service: ScanNGrub\r\n\r\nframeworkVersion: '3'\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs18.x\r\n  environment:\r\n    TABLE_NAME: ${self:service}-${opt:stage, self:provider.stage}-table\r\n    BUCKET_NAME: ${self:service}-${opt:stage, self:provider.stage}-bucket\r\n    MONGODB_URI: ${ssm:/ScanNGrub/MONGODB_URI}\r\n    JWT_SECRET: ${ssm:/ScanNGrub/JWT_SECRET}\r\n\r\nfunctions:\r\n  # User Functions\r\n  userLogin:\r\n    handler: src/handlers/user.login\r\n    events:\r\n      - http:\r\n          path: /user/login\r\n          method: post\r\n          cors: true\r\n\r\n  userSignup:\r\n    handler: src/handlers/user.signup\r\n    events:\r\n      - http:\r\n          path: /user/signup\r\n          method: post\r\n          cors: true\r\n\r\n  # Restaurant Functions\r\n  listRestaurants:\r\n    handler: src/handlers/restaurant.list\r\n    events:\r\n      - http:\r\n          path: /restaurant/owner-dashboard\r\n          method: post\r\n          cors: true\r\n\r\n  addRestaurant:\r\n    handler: src/handlers/restaurant.add\r\n    events:\r\n      - http:\r\n          path: /restaurant/add-restaurant\r\n          method: post\r\n          cors: true\r\n\r\n  getRestaurantDetails:\r\n    handler: src/handlers/restaurant.getDetails\r\n    events:\r\n      - http:\r\n          path: /restaurant/details/{id}\r\n          method: get\r\n          cors: true\r\n\r\n  # Menu Item Functions\r\n  addMenuItem:\r\n    handler: src/handlers/menuItem.add\r\n    events:\r\n      - http:\r\n          path: /restaurant/{id}/menu-item\r\n          method: post\r\n          cors: true\r\n\r\n  editMenuItem:\r\n    handler: src/handlers/menuItem.edit\r\n    events:\r\n      - http:\r\n          path: /restaurant/{id}/menu-item/{itemId}\r\n          method: put\r\n          cors: true\r\n\r\n  deleteMenuItem:\r\n    handler: src/handlers/menuItem.delete\r\n    events:\r\n      - http:\r\n          path: /restaurant/{id}/menu-item/{itemId}\r\n          method: delete\r\n          cors: true\r\n\r\n  scanRestaurant:\r\n    handler: src/handlers/restaurant.scan\r\n    events:\r\n      - http:\r\n          path: /restaurant/scan/{id}\r\n          method: get\r\n          cors: true\r\n\r\nresources:\r\n  Resources:\r\n    RestaurantTable:\r\n      Type: AWS::DynamoDB::Table\r\n      Properties:\r\n        TableName: ${self:provider.environment.TABLE_NAME}\r\n        AttributeDefinitions:\r\n          - AttributeName: id\r\n            AttributeType: S\r\n        KeySchema:\r\n          - AttributeName: id\r\n            KeyType: HASH\r\n        BillingMode: PAY_PER_REQUEST\r\n\r\n    QRBucket:\r\n      Type: AWS::S3::Bucket\r\n      Properties:\r\n        BucketName: ${self:provider.environment.BUCKET_NAME}\r\n        CorsConfiguration:\r\n          CorsRules:\r\n            - AllowedHeaders: ['*']\r\n              AllowedMethods: [GET, PUT, POST, DELETE]\r\n              AllowedOrigins: ['*']\r\n\r\ncustom:\r\n  cors:\r\n    origin: '*'\r\n    headers:\r\n      - Content-Type\r\n      - Authorization\r\n    allowCredentials: true",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "debug": "*"
+    },
+    "orgId": "d83ea72f-d410-46a1-b99c-3b7a8fb9a294",
+    "orgName": "floralvortex",
+    "userId": "CX6mvWygPLjl3Glk8c",
+    "userName": "floralvortex",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

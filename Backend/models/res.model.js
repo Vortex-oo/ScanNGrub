@@ -39,7 +39,7 @@ const restaurantSchema = new mongoose.Schema(
         }, 
         QrCode: {
             type: String,
-            default: null,
+            default: '',
         },
         menuItems: [
             {

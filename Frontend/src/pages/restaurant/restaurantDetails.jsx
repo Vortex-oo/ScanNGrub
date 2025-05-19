@@ -118,16 +118,32 @@ const RestaurantDetails = () => {
 
     const handleGenerateQR = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/restaurant/scan/${id}`, {
-                headers: { 'Content-Type': 'application/json' },
-                withCredentials: true
-            })
-            setQrCode(response.data.qrCode)
-            setShowQR(true)
+            setIsLoading(true);
+            const response = await axios.get(
+                `http://localhost:3000/restaurant/scan/${id}`,
+                {
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    withCredentials: true
+                }
+            );
+            
+            if (response.data.success) {
+                setQrCode(response.data.qrCode);
+                setShowQR(true);
+            } else {
+                throw new Error(response.data.message || 'Failed to generate QR code');
+            }
         } catch (error) {
-            console.error("Error generating QR code:", error);
+            console.error("Error generating QR code:", error.response?.data?.message || error.message);
+            // Optionally show error to user
+            alert('Failed to generate QR code. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
     const handleUpdateMenuItem = async (itemId) => {
         try {
