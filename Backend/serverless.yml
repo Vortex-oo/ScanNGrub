@@ -1,0 +1,174 @@
+service: scanNgrub-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    MONGODB_URI: ${ssm:/scanNgrub/${self:provider.stage}/MONGODB_URI}
+    JWT_SECRET: ${ssm:/scanNgrub/${self:provider.stage}/JWT_SECRET}
+    NODE_ENV: ${self:provider.stage}
+
+functions:
+  # User Functions
+  userSignup:
+    handler: controllers/user.controller.userSignup
+    events:
+      - http:
+          path: /user/signup
+          method: post
+          cors: true
+
+  userLogin:
+    handler: controllers/user.controller.userLogin
+    events:
+      - http:
+          path: /user/login
+          method: post
+          cors: true
+
+  userVerify:
+    handler: controllers/user.controller.userVerify
+    events:
+      - http:
+          path: /user/verify
+          method: post
+          cors: true
+
+  # Owner Functions
+  ownerSignup:
+    handler: controllers/owner.controller.ownerSignup
+    events:
+      - http:
+          path: /owner/signup
+          method: post
+          cors: true
+
+  ownerLogin:
+    handler: controllers/owner.controller.ownerLogin
+    events:
+      - http:
+          path: /owner/login
+          method: post
+          cors: true
+
+  ownerVerify:
+    handler: controllers/owner.controller.ownerVerify
+    events:
+      - http:
+          path: /owner/verify
+          method: post
+          cors: true
+
+  # Restaurant Functions
+  listRestaurants:
+    handler: controllers/restaurant.controller.listRestaurants
+    events:
+      - http:
+          path: /restaurant/owner-dashboard
+          method: post
+          cors: true
+
+  addRestaurant:
+    handler: controllers/restaurant.controller.addRestaurant
+    events:
+      - http:
+          path: /restaurant/add-restaurant
+          method: post
+          cors: true
+
+  manageRestaurant:
+    handler: controllers/restaurant.controller.manageRestaurant
+    events:
+      - http:
+          path: /restaurant/details/{id}
+          method: get
+          cors: true
+
+  addMenuItem:
+    handler: controllers/restaurant.controller.addMenuItem
+    events:
+      - http:
+          path: /restaurant/{id}/menu-item
+          method: post
+          cors: true
+
+  editMenuItem:
+    handler: controllers/restaurant.controller.editMenuItem
+    events:
+      - http:
+          path: /restaurant/{id}/menu-item/{itemId}
+          method: put
+          cors: true
+
+  deleteMenuItem:
+    handler: controllers/restaurant.controller.deleteMenuItem
+    events:
+      - http:
+          path: /restaurant/{id}/menu-item/{itemId}
+          method: delete
+          cors: true
+
+  scanRestaurant:
+    handler: controllers/restaurant.controller.scanRestaurant
+    events:
+      - http:
+          path: /restaurant/scan/{id}
+          method: get
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: webpack.config.js
+    includeModules: true
+  cors:
+    origin: '*'
+    headers:
+      - Content-Type
+      - Authorization
+      - X-Api-Key
+    allowCredentials: true
+
+resources:
+  Resources:
+    RestaurantsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-restaurants
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-users
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    OwnersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-owners
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
