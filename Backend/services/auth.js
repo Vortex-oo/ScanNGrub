@@ -9,7 +9,7 @@ function createToken(userId, email, password) {
         password: password
     };
 
-    const secretKey = crypto.randomBytes(32).toString('hex');
+    const secretKey = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
     const options = {
         expiresIn: '1h'
     };

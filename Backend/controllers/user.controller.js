@@ -3,7 +3,7 @@ import userModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import crypto from 'crypto';
 import {createToken, verifyToken } from "../services/auth.js";
-
+import { createResponse } from "../crossResponse.js";
 
 const userSignup = async (req, res) => {
     try {
@@ -149,7 +149,7 @@ const userVerify = async (req, res) => {
     const user= verifyToken(token)
 
     if (user) {
-        return res.status(200).json({
+        return createResponse(200).json({
             msg:"valid token"
         })
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import api from '../../../config/api_config.js';
 import gsap from 'gsap';
 import { FaUserNinja } from "react-icons/fa";
 import { HiPhone } from "react-icons/hi2";
@@ -49,7 +49,7 @@ const AddRestaurant = () => {
         setError('');
 
         try {
-            await axios.post('http://localhost:3000/restaurant/add-restaurant', {
+            await api.post('/restaurant/add-restaurant', {
                 name,
                 address,
                 contactNumber,

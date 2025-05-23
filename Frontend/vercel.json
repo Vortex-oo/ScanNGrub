@@ -1,0 +1,11 @@
+{
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ],
+    "env": {
+        "VITE_API_URL": "https://m9p1vt2h6e.execute-api.ap-south-1.amazonaws.com/dev"
+    }
+}

@@ -3,13 +3,13 @@ import bcrypt from "bcrypt";
 import crypto from 'crypto';
 import ownerModel from "../models/owner.model.js";
 import { createToken,verifyToken } from "../services/auth.js";
-
+import { createResponse } from "../crossResponse.js";
 
 const ownerSignup = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({
+            return createResponse(400).json({
                 success: false,
                 errors: errors.array()
             });
@@ -19,7 +19,7 @@ const ownerSignup = async (req, res) => {
 
         const existingOwner = await ownerModel.findOne({ email });
         if (existingOwner) {
-            return res.status(400).json({
+            return createResponse(400).json({
                 success: false,
                 message: "Email already exists"
             });
@@ -38,7 +38,7 @@ const ownerSignup = async (req, res) => {
         const savedOwner = await newOwner.save();
         const token = createToken(savedOwner);
 
-        return res.status(201).json({
+        return createResponse(201).json({
             success: true,
             message: "Owner created successfully",
             owner: {
@@ -51,7 +51,7 @@ const ownerSignup = async (req, res) => {
 
     } catch (error) {
         console.error('Signup error:', error);
-        return res.status(500).json({
+        return createResponse(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
@@ -66,7 +66,7 @@ const ownerLogin = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({
+            return createResponse(400).json({
                 success: false,
                 errors: errors.array()
             });
@@ -76,7 +76,7 @@ const ownerLogin = async (req, res) => {
 
         const owner = await ownerModel.findOne({ email });
         if (!owner) {
-            return res.status(400).json({
+            return createResponse(400).json({
                 success: false,
                 message: "Invalid credentials"
             });
@@ -84,7 +84,7 @@ const ownerLogin = async (req, res) => {
 
         const isValidPassword = await bcrypt.compare(password, owner.password);
         if (!isValidPassword) {
-            return res.status(400).json({
+            return createResponse(400).json({
                 success: false,
                 message: "Invalid credentials"
             });
@@ -92,13 +92,13 @@ const ownerLogin = async (req, res) => {
 
         const token = createToken(owner);
         
-        res.cookie('ownerToken', token, { 
+        createResponse.cookie('ownerToken', token, { 
             maxAge: 3600000, 
             httpOnly: true, 
             secure: true 
         });
 
-        return res.status(200).json({
+        return createResponse(200).json({
             success: true,
             message: "Login successful",
             owner: {
@@ -111,7 +111,7 @@ const ownerLogin = async (req, res) => {
 
     } catch (error) {
         console.error('Login error:', error);
-        return res.status(500).json({
+        return createResponse(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
@@ -123,7 +123,7 @@ const ownerVerify = async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        return res.status(400).json({
+        return createResponse(400).json({
             success: false,
             errors: errors.array()
         });
@@ -132,7 +132,7 @@ const ownerVerify = async (req, res) => {
     const token = req.body;
 
     if (!token) {
-        return res.status(400).json({
+        return createResponse(400).json({
             success: false,
             message: "Invalid token"
         });
@@ -141,7 +141,7 @@ const ownerVerify = async (req, res) => {
     const owner = verifyToken(token);
 
     if (owner) {
-        return res.status(200).json({
+        return createResponse(200).json({
             success: true,
             message: "Valid token",
             owner: {
@@ -152,7 +152,7 @@ const ownerVerify = async (req, res) => {
         });
     }
 
-    return res.status(400).json({
+    return createResponse(400).json({
         success: false,
         message: "Invalid token"
     });

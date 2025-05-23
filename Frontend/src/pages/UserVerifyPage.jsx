@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../Slices/userSlices";
-import axios from 'axios';
+import api from "../../config/api_config.js";
 
 const UserVerify = ({ children }) => {
     const navigate = useNavigate();
@@ -25,8 +25,8 @@ const UserVerify = ({ children }) => {
             }
 
             try {
-                const response = await axios.post(
-                    "http://localhost:3000/user/verify",
+                const response = await api.post(
+                    "/user/verify",
                     { userToken: token },
                     {
                         headers: {

@@ -2,14 +2,17 @@
     import menuModel from '../models/menu.model.js';
     import crypto from 'crypto';
     import QRCode from 'qrcode';
+    import { createResponse } from '../crossResponse.js';
+
+
     // Controller to list all restaurants
     export const listRestaurants = async (req, res) => {
         try {
             const {ownerId} = req.body
             const restaurants = await restaurantModel.find({ownerId});
-            res.status(200).json(restaurants);
+            createResponse(200).json(restaurants);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            createResponse(500).json({ message: error.message });
         }
     };
 
@@ -17,7 +20,7 @@
     export const addRestaurant = async (req, res) => {
         const { name, address, contactNumber,upiId,ownerId } = req.body;
         if (!name || !address || !contactNumber || !upiId) {
-            return res.status(400).json({ message: 'All fields are required' });
+            return createResponse(400).json({ message: 'All fields are required' });
         }
         try {
             const restaurantId = crypto.randomBytes(10).toString('hex')
@@ -37,9 +40,9 @@
             if (!restaurant) {
                 return res.status(404).json({ message: 'Restaurant not found' });
             }
-            res.status(200).json(restaurant);
+            createResponse(200).json(restaurant);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            createResponse(500).json({ message: error.message });
         }
     };
 
@@ -57,7 +60,7 @@
 
             res.status(201).json(newMenuItem);
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            createResponse(400).json({ message: error.message });
         }
     };
 
@@ -68,11 +71,11 @@
         try {
             const menuItem = await menuModel.findByIdAndUpdate(itemId, { name, price, description, available }, { new: true });
             if (!menuItem) {
-                return res.status(404).json({ message: 'Menu item not found' });
+                return createResponse(404).json({ message: 'Menu item not found' });
             }
-            res.status(200).json(menuItem);
+            createResponse(200).json(menuItem);
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            createResponse(400).json({ message: error.message });
         }
     };
 
@@ -82,16 +85,16 @@
         try {
             const menuItem = await menuModel.findByIdAndDelete(itemId);
             if (!menuItem) {
-                return res.status(404).json({ message: 'Menu item not found' });
+                return createResponse(404).json({ message: 'Menu item not found' });
             }
 
             const restaurant = await restaurantModel.findById(id);
             restaurant.menuItems.pull(itemId);
             await restaurant.save();
 
-            res.status(200).json({ message: 'Menu item deleted successfully' });
+            createResponse(200).json({ message: 'Menu item deleted successfully' });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            createResponse(500).json({ message: error.message });
         }
     };
 
@@ -102,7 +105,7 @@
         try {
             const restaurant = await restaurantModel.findById(id).populate('menuItems');
             if (!restaurant) {
-                return res.status(404).json({ 
+                return createResponse(404).json({ 
                     success: false,
                     message: 'Restaurant not found' 
                 });
@@ -117,7 +120,7 @@
             restaurant.QrCode = qrCodeUrl;
             await restaurant.save();
     
-            return res.status(200).json({
+            return createResponse(200).json({
                 success: true,
                 message: 'Restaurant QR code generated successfully',
                 qrCode: qrCodeUrl,
@@ -128,7 +131,7 @@
             });
         } catch (error) {
             console.error('QR Code Generation Error:', error);
-            return res.status(500).json({ 
+            return createResponse(500).json({ 
                 success: false,
                 message: 'Error generating QR code',
                 error: error.message 

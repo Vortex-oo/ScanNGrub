@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../../config/api_config.js';
 import gsap from 'gsap';
 import { FaPhone, FaMapMarkerAlt, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 import { IoRestaurant } from 'react-icons/io5';
@@ -32,7 +32,7 @@ const RestaurantDetails = () => {
 
     const fetchRestaurant = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/restaurant/details/${id}`, {
+            const response = await api.get(`/restaurant/details/${id}`, {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });

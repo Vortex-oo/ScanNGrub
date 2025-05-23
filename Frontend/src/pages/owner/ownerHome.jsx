@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../config/api_config.js"
 
 
 const OwnerHomePage = () => {
@@ -15,7 +15,7 @@ const OwnerHomePage = () => {
 
     const fetchRestaurants = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/restaurant/owner-dashboard', {
+            const response = await api.post('/restaurant/owner-dashboard', {
                 ownerId: owner.ownerId
             }, {
                 headers: { 'Content-Type': 'application/json' },

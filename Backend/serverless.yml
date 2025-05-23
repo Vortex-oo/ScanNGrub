@@ -1,14 +1,24 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: floralvortex
 service: scanNgrub-backend
 
 provider:
   name: aws
   runtime: nodejs18.x
-  region: us-east-1
+  region: ap-south-1
   stage: ${opt:stage, 'dev'}
   environment:
-    MONGODB_URI: ${ssm:/scanNgrub/${self:provider.stage}/MONGODB_URI}
-    JWT_SECRET: ${ssm:/scanNgrub/${self:provider.stage}/JWT_SECRET}
-    NODE_ENV: ${self:provider.stage}
+    MONGODB_URI: ${ssm:/scanNgrub/dev/MONGODB_URI, true}
+    JWT_SECRET: ${ssm:/scanNgrub/dev/JWT_SECRET, true}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource:
+            - arn:aws:ssm:${self:provider.region}:108782070801:parameter/scanNgrub/${self:provider.stage}/*
 
 functions:
   # User Functions
@@ -118,17 +128,20 @@ functions:
           method: get
           cors: true
 
-plugins:
-  - serverless-offline
-  - serverless-dotenv-plugin
-  - serverless-webpack
+  optionsHandler:
+    handler: controllers/options.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: options
+          cors: true
 
 custom:
   webpack:
     webpackConfig: webpack.config.js
     includeModules: true
   cors:
-    origin: '*'
+    origin: 'https://scanngrub.vercel.app/'
     headers:
       - Content-Type
       - Authorization

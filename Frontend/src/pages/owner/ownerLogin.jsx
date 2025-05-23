@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
-import axios from 'axios';
+import api from '../../../config/api_config.js';
 import { useDispatch } from 'react-redux';
 import { setOwner } from '../../Slices/ownerSlice.js';
 
@@ -29,7 +29,7 @@ const OwnerLogin = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:3000/owner/login",{
+            const response = await api.post("/owner/login",{
                 email: email,
                 password: password
             },
