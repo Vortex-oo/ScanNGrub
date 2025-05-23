@@ -6,8 +6,8 @@ import { FaUserNinja } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useDispatch } from 'react-redux';
 import { setOwner } from '../../Slices/ownerSlice.js';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../config/api_config.js';
 
 
 const OwnerSignup = () => {
@@ -36,7 +36,7 @@ const OwnerSignup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/owner/signup',{
+      const response = await api.post('/owner/signup',{
         email: email,
         password: password,
         name: name
@@ -198,7 +198,7 @@ const OwnerSignup = () => {
 
       <div className="text-center mt-6 flex justify-center gap-1" ref={newUserRef}>
         <p className="text-white">Already have an account?</p>
-        <Link to="/user/login" className="text-[#d28de8]">
+        <Link to="/owner/login" className="text-[#d28de8]">
           Login to your account!
         </Link>
       </div>
